@@ -1,7 +1,8 @@
 resource "google_cloudbuild_trigger" "build_trigger" {
-  name        = coalesce(var.build_name, "${var.gh_repo_name}-build")
-  description = "Managed by Terraform"
-  tags        = ["build"]
+  name            = coalesce(var.build_name, "${var.gh_repo_name}-build")
+  description     = "Managed by Terraform"
+  tags            = ["build"]
+  service_account = var.service_account_email
 
   github {
     owner = var.gh_repo_owner

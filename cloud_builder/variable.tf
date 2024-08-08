@@ -54,3 +54,9 @@ variable "build_name" {
   default     = null
   description = "what is the name of the build trigger"
 }
+
+variable "service_account_email" {
+  type        = string
+  default     = null
+  description = "what is the service account that runs this build"
+}
