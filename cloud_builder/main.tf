@@ -36,6 +36,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
       for_each = var.machine_type != null ? [1] : []
       content {
         machine_type = var.machine_type
+        logging      = "CLOUD_LOGGING_ONLY"
       }
     }
 
