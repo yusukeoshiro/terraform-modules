@@ -96,7 +96,7 @@ resource "google_compute_region_network_endpoint_group" "neg" {
 
 
 resource "google_compute_backend_service" "backend" {
-  name     = "backend-${var.service_name}"
+  name     = "${var.service_name}-${var.region_name}"
   protocol = "HTTPS"
   backend {
     group = google_compute_region_network_endpoint_group.neg.id
@@ -113,7 +113,7 @@ resource "google_compute_backend_service" "backend" {
 
 
 resource "google_compute_region_backend_service" "backend" {
-  name                  = "rgn-backend-${var.service_name}"
+  name                  = "rgn-${var.service_name}-${var.region_name}"
   region                = var.region_name
   load_balancing_scheme = "INTERNAL_MANAGED"
   protocol              = "HTTP"
