@@ -75,10 +75,11 @@ resource "google_cloud_run_service" "run_service" {
 }
 
 resource "google_cloud_run_service_iam_member" "invoker" {
-  count   = var.allow_unauthenticated ? 1 : 0
-  service = google_cloud_run_service.run_service.name
-  role    = "roles/run.invoker"
-  member  = "allUsers"
+  count    = var.allow_unauthenticated ? 1 : 0
+  location = var.region_name
+  service  = google_cloud_run_service.run_service.name
+  role     = "roles/run.invoker"
+  member   = "allUsers"
 }
 
 
