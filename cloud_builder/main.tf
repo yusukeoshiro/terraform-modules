@@ -20,6 +20,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
       content {
         name = "gcr.io/kaniko-project/executor:latest"
         args = flatten([
+          "--dockerfile=${var.dockerfile}",
           "--context=${var.context}",
           "--destination=${var.image_name}:${length(var.environments) > 0 ? "${step.value.environment}-" : ""}$TAG_NAME",
           "--cache=true",

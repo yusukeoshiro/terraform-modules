@@ -43,6 +43,11 @@ variable "parallelism" {
   default = false
 }
 
+variable "dockerfile" {
+  type    = string
+  default = "Dockerfile"
+}
+
 variable "context" {
   type        = string
   default     = "."
