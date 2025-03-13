@@ -72,3 +72,9 @@ variable "tag_pattern" {
   default     = "^v[0-9]+(\\.[0-9]+){2}(-rc[0-9]+)?$"
   description = "something that looks like v1.1.1 or v1.1.1-rc1"
 }
+
+variable "additional_tags" {
+  description = "List of additional tags for the Docker image"
+  type        = list(string)
+  default     = []
+}

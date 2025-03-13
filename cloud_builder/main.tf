@@ -22,8 +22,12 @@ resource "google_cloudbuild_trigger" "build_trigger" {
         args = flatten([
           "--dockerfile=${var.dockerfile}",
           "--context=${var.context}",
-          "--destination=${var.image_name}:${length(var.environments) > 0 ? "${step.value.environment}-" : ""}$TAG_NAME",
           "--cache=true",
+          "--destination=${var.image_name}:${length(var.environments) > 0 ? "${step.value.environment}-" : ""}$TAG_NAME",
+          # Add additional tags dynamically
+          [
+            for tag in var.additional_tags : "--destination=${var.image_name}:${length(var.environments) > 0 ? "${step.value.environment}-" : ""}${tag}"
+          ],
           [
             for key, value in step.value.buildArgs : "--build-arg=${key}=${value}"
           ]
@@ -44,4 +48,3 @@ resource "google_cloudbuild_trigger" "build_trigger" {
     timeout = var.timeout
   }
 }
-
