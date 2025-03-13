@@ -10,7 +10,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
 
     push {
       # something that looks like v1.1.1 or v1.1.1-rc1
-      tag = "^v[0-9]+(\\.[0-9]+){2}(-rc[0-9]+)?$"
+      tag = var.tag_pattern
     }
   }
 

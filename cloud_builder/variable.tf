@@ -65,3 +65,10 @@ variable "service_account_email" {
   default     = null
   description = "what is the service account that runs this build"
 }
+
+
+variable "tag_pattern" {
+  type        = string
+  default     = "^v[0-9]+(\\.[0-9]+){2}(-rc[0-9]+)?$"
+  description = "something that looks like v1.1.1 or v1.1.1-rc1"
+}
