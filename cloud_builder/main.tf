@@ -26,7 +26,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
           "--destination=${var.image_name}:${length(var.environments) > 0 ? "${step.value.environment}-" : ""}$TAG_NAME",
           # Add additional tags dynamically
           [
-            for tag in var.additional_tags : "--destination=${var.image_name}:${length(var.environments) > 0 ? "${step.value.environment}-" : ""}${tag}"
+            for tag in var.additional_tags : "--destination=${var.image_name}:${length(var.environments) > 0 ? "${step.value.environment}-" : ""}${tag}-$TAG_NAME"
           ],
           [
             for key, value in step.value.buildArgs : "--build-arg=${key}=${value}"
