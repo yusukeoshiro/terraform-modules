@@ -15,28 +15,35 @@ resource "google_cloudbuild_trigger" "build_trigger" {
   }
 
   build {
-    dynamic "step" {
-      for_each = length(var.environments) > 0 ? toset(var.environments) : toset([{ "environment" = "default", buildArgs = {} }])
-      content {
-        name = "gcr.io/kaniko-project/executor:latest"
-        args = flatten([
-          "--dockerfile=${var.dockerfile}",
-          "--context=${var.context}",
-          "--cache=true",
-          "--destination=${var.image_name}:${length(var.environments) > 0 ? "${step.value.environment}-" : ""}$TAG_NAME",
-          # Add additional tags dynamically
-          [
-            for tag in var.additional_tags : "--destination=${var.image_name}:${length(var.environments) > 0 ? "${step.value.environment}-" : ""}${tag}-$TAG_NAME"
-          ],
-          [
-            for key, value in step.value.buildArgs : "--build-arg=${key}=${value}"
-          ]
-        ])
-        id       = step.value.environment
-        wait_for = var.parallelism ? ["-"] : null
-      }
-    }
+    step {
+      name       = "gcr.io/cloud-builders/docker"
+      entrypoint = "bash"
+      args = [
+        "-c",
+        join(" && ", [
+          "docker pull ${var.image_name}:latest || echo 'No cache available'",
 
+          # Build image with all tags
+          join(" ", flatten([
+            "docker build",
+            "--cache-from=${var.image_name}:latest",
+            "--tag=${var.image_name}:$TAG_NAME",
+            [
+              for tag in var.additional_tags :
+              "--tag=${var.image_name}:${tag}-$TAG_NAME"
+            ],
+            "."
+          ])),
+
+          # Push all tags
+          "docker push ${var.image_name}:$TAG_NAME",
+          join(" && ", [
+            for tag in var.additional_tags :
+            "docker push ${var.image_name}:${tag}-$TAG_NAME"
+          ])
+        ])
+      ]
+    }
     dynamic "options" {
       for_each = var.machine_type != null ? [1] : []
       content {

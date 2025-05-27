@@ -16,17 +16,6 @@ variable "image_name" {
   description = "should look something like asia-northeast1-docker.pkg.dev/pragmatic-parking-dev/containers/IMAGE_NAME. The cloud build service account assumes access is provided to upload to this"
 }
 
-
-variable "environments" {
-  description = "List of maps, each representing an environment's build configuration"
-  type = list(object({
-    environment = string
-    buildArgs   = map(string)
-  }))
-  default = []
-}
-
-
 variable "timeout" {
   type        = string
   default     = "3600s"
