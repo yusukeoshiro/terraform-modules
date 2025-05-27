@@ -26,6 +26,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
           # Build image with all tags
           join(" ", flatten([
             "docker build",
+            "--file=${var.dockerfile}",
             "--cache-from=${var.image_name}:latest",
             "--tag=${var.image_name}:$TAG_NAME",
             [
