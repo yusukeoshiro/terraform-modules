@@ -29,6 +29,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
             "--file=${var.dockerfile}",
             "--cache-from=${var.image_name}:latest",
             "--tag=${var.image_name}:$TAG_NAME",
+            "--tag=${var.image_name}:latest",
             [
               for tag in var.additional_tags :
               "--tag=${var.image_name}:${tag}-$TAG_NAME"
@@ -38,6 +39,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
 
           # Push all tags
           "docker push ${var.image_name}:$TAG_NAME",
+          "docker push ${var.image_name}:latest",
           join(" && ", [
             for tag in var.additional_tags :
             "docker push ${var.image_name}:${tag}-$TAG_NAME"
