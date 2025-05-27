@@ -9,7 +9,6 @@ resource "google_cloudbuild_trigger" "build_trigger" {
     name  = var.gh_repo_name
 
     push {
-      # something that looks like v1.1.1 or v1.1.1-rc1
       tag = var.tag_pattern
     }
   }
@@ -21,32 +20,28 @@ resource "google_cloudbuild_trigger" "build_trigger" {
       args = [
         "-c",
         join(" && ", [
-          "docker pull ${var.image_name}:latest || echo 'No cache available'",
+          # Create and use a buildx builder (harmless if already exists)
+          "docker buildx create --use || true",
 
-          # Build image with all tags
+          # Build + push with full tag set and registry-based cache
           join(" ", flatten([
-            "docker build",
+            "docker buildx build",
             "--file=${var.dockerfile}",
-            "--cache-from=${var.image_name}:latest",
+            "--cache-from=type=registry,ref=${var.image_name}:cache",
+            "--cache-to=type=registry,ref=${var.image_name}:cache,mode=max",
             "--tag=${var.image_name}:$TAG_NAME",
             "--tag=${var.image_name}:latest",
             [
               for tag in var.additional_tags :
               "--tag=${var.image_name}:${tag}-$TAG_NAME"
             ],
-            "."
-          ])),
-
-          # Push all tags
-          "docker push ${var.image_name}:$TAG_NAME",
-          "docker push ${var.image_name}:latest",
-          join(" && ", [
-            for tag in var.additional_tags :
-            "docker push ${var.image_name}:${tag}-$TAG_NAME"
-          ])
+            "--push",
+            var.context
+          ]))
         ])
       ]
     }
+
     dynamic "options" {
       for_each = var.machine_type != null ? [1] : []
       content {
