@@ -3,6 +3,7 @@ resource "google_cloudbuild_trigger" "build_trigger" {
   description     = "Managed by Terraform"
   tags            = ["build"]
   service_account = var.service_account_email
+  location        = var.location
 
   github {
     owner = var.gh_repo_owner

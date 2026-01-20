@@ -16,6 +16,12 @@ variable "image_name" {
   description = "should look something like asia-northeast1-docker.pkg.dev/pragmatic-parking-dev/containers/IMAGE_NAME. The cloud build service account assumes access is provided to upload to this"
 }
 
+variable "location" {
+  type        = string
+  default     = "global"
+  description = "cloud build location for the trigger"
+}
+
 variable "timeout" {
   type        = string
   default     = "3600s"
